@@ -1,5 +1,6 @@
 package com.transferwise.sequencelayout
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Rect
@@ -12,6 +13,7 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import kotlinx.android.synthetic.main.sequence_layout.view.*
 
 /**
@@ -172,6 +174,7 @@ public class SequenceLayout(context: Context, attrs: AttributeSet?, defStyleAttr
         progressBarForeground.requestLayout()
     }
 
+    @SuppressLint("NewApi")
     private val animateToActive = {
         progressBarForeground.visibility = VISIBLE
         progressBarForeground.pivotY = 0f
@@ -182,7 +185,7 @@ public class SequenceLayout(context: Context, attrs: AttributeSet?, defStyleAttr
         if (activeStepIndex != -1) {
             val activeDot = dotsWrapper.getChildAt(activeStepIndex)
             val activeDotTopMargin = (activeDot.layoutParams as LayoutParams).topMargin
-            val progressBarForegroundTopMargin = (progressBarForeground.layoutParams as LayoutParams).topMargin
+            val progressBarForegroundTopMargin = (progressBarForeground.layoutParams as ConstraintLayout.LayoutParams).topMargin
             val scaleEnd = (activeDotTopMargin + (activeDot.measuredHeight / 2) - progressBarForegroundTopMargin) /
                     progressBarBackground.measuredHeight.toFloat()
 
@@ -192,7 +195,7 @@ public class SequenceLayout(context: Context, attrs: AttributeSet?, defStyleAttr
                     .scaleY(scaleEnd)
                     .setInterpolator(LinearInterpolator())
                     .setDuration(activeStepIndex * resources.getInteger(R.integer.sequence_step_duration).toLong())
-                    .setUpdateListener({
+                    .setUpdateListener {
                         val animatedOffset = progressBarForeground.scaleY * progressBarBackground.measuredHeight
                         dotsWrapper
                                 .children()
@@ -212,7 +215,7 @@ public class SequenceLayout(context: Context, attrs: AttributeSet?, defStyleAttr
                                         }
                                     }
                                 }
-                    })
+                    }
                     .start()
         }
     }
